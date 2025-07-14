@@ -1,0 +1,15 @@
+# Ignorer lagret vektorindeks
+index_storage/
+
+# Ignorer spesifikk PDF (din bacheloroppgave)
+pdf_folder/Bachelor Project Report - Fremtidsmat Calculator.pdf
+
+# Ignorer alle __pycache__ og midlertidige filer
+__pycache__/
+*.pyc
+
+# Ignorer editor-filer (valgfritt)
+*.swp
+*.swo
+*.idea/
+.vscode/
