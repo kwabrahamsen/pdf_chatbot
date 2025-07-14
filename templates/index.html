@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8" />
+    <title>PDF Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            max-width: 700px;
+        }
+        #chatbox {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            background: #f9f9f9;
+        }
+        .user {
+            color: blue;
+            margin: 0.5rem 0;
+        }
+        .bot {
+            color: green;
+            margin: 0.5rem 0;
+        }
+        .bot-content pre {
+            background: #eee;
+            padding: 0.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .thinking {
+            color: gray;
+            font-style: italic;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 0.5rem;
+        }
+        button {
+            padding: 0.5rem 1rem;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h1>PDF Chatbot</h1>
+    <div id="chatbox"></div>
+    <input id="input" type="text" placeholder="Skriv spørsmålet ditt..." autofocus />
+    <button onclick="sendQuery()">Send</button>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const input = document.getElementById('input');
+
+        function appendMessage(sender, text, className = '') {
+            const div = document.createElement('div');
+            div.className = className || sender;
+
+            if (sender === 'user') {
+                div.textContent = 'Du: ' + text;
+            } else {
+                div.innerHTML = `<strong>Bot:</strong><br><span class="bot-content"></span>`;
+            }
+
+            chatbox.appendChild(div);
+            chatbox.scrollTop = chatbox.scrollHeight;
+            return div;
+        }
+
+        async function sendQuery() {
+            const query = input.value.trim();
+            if (!query) return;
+
+            appendMessage('user', query);
+            input.value = '';
+
+            const botDiv = appendMessage('bot', '', 'thinking');
+            const contentSpan = botDiv.querySelector('.bot-content');
+            contentSpan.innerHTML = '<em>Skriver...</em>';
+
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let fullText = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    fullText += chunk;
+
+                    // Oppdater visning med Markdown
+                    contentSpan.innerHTML = marked.parse(fullText);
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                }
+
+                botDiv.classList.remove('thinking');
+            } catch (e) {
+                botDiv.classList.remove('thinking');
+                contentSpan.textContent = 'Feil ved nettverksforespørsel.';
+            }
+        }
+
+        input.addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendQuery();
+        });
+    </script>
+</body>
+</html>
