@@ -13,3 +13,6 @@ __pycache__/
 *.swo
 *.idea/
 .vscode/
+
+# MacOS spesifikke filer
+.DS_Store
