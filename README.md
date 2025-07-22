@@ -1,15 +1,15 @@
-# 📚 PDF Chatbot med LlamaIndex, Flask og Ollama
+# PDF Chatbot med LlamaIndex, Flask og Ollama
 
 Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til innholdet i dine egne PDF-filer. Den bruker `LlamaIndex` til å indeksere dokumenter, `Ollama` som LLM-backend, og `Flask` som webserver.
 
-## 🚀 Funksjoner
+## Funksjoner
 
 - Last inn og indekser egne PDF-filer
 - Still spørsmål i et enkelt webgrensesnitt
 - Få svar generert av en språkmodell (f.eks. Dolphin-Mistral via Ollama)
 - Sanntids-strømming av svaret til siden
 
-## 🧱 Teknologier
+## Teknologier
 
 - **Python 3.10+**
 - **Flask** – enkel backend og API
@@ -18,7 +18,7 @@ Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til
 - **HuggingFace Embeddings** – for tekstvektorer
 - **HTML/JS** – frontend med støtte for sanntidsstrømming
 
-## 🗂️ Prosjektstruktur
+## Prosjektstruktur
 
 ```text
 pdf-chatbot/
@@ -31,7 +31,7 @@ pdf-chatbot/
 └── README.md
 ```
 
-## ⚙️ Kom i gang
+## Kom i gang
 
 ### 1. Installer avhengigheter med Poetry
 
@@ -51,6 +51,6 @@ poetry run python app.py
 
 Besøk http://localhost:5000 i nettleseren for å chatte med PDF-ene dine.
 
-## 🔁 Gjenoppbygging av indeks
+## Gjenoppbygging av indeks
 
 Hvis du oppdaterer innholdet i pdf_folder/, slett mappen index_storage/ for å bygge indeksen på nytt neste gang appen startes.
