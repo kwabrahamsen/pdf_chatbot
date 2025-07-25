@@ -1,64 +1,87 @@
 import os
-from llama_index.core import (
-    VectorStoreIndex,
-    StorageContext,
-    load_index_from_storage,
-    SimpleDirectoryReader
-)
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+import sys
+import time
+import threading
+from pdf_chatbot.core import ensure_pdf_folder, load_or_build_index, get_query_engine
 
-PDF_FOLDER = "pdf_folder"
-INDEX_DIR = "index_storage"
+# Fargekoder via ANSI escape (eller bruk colorama)
+try:
+    from colorama import init, Fore, Style
+    init()  # For Windows støtte
+    BOLD = Style.BRIGHT
+    RESET = Style.RESET_ALL
+    BLUE = Fore.BLUE
+    GREEN = Fore.GREEN
+    CYAN = Fore.CYAN
+except ImportError:
+    BOLD = "\033[1m"
+    RESET = "\033[0m"
+    BLUE = "\033[34m"
+    GREEN = "\033[32m"
+    CYAN = "\033[36m"
 
-# Opprett mappe om den ikke finnes
-os.makedirs(PDF_FOLDER, exist_ok=True)
+# Tenker-animasjon
+class Spinner:
+    def __init__(self, message="Tenker"):
+        self.stop_running = False
+        self.thread = threading.Thread(target=self.animate)
+        self.message = message
 
-# Finn PDF-er
-pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.lower().endswith('.pdf')]
+    def animate(self):
+        spinner_chars = "|/-\\"
+        idx = 0
+        while not self.stop_running:
+            sys.stdout.write(f"\r{CYAN}{self.message}...{spinner_chars[idx % len(spinner_chars)]}{RESET}")
+            sys.stdout.flush()
+            idx += 1
+            time.sleep(0.1)
+        sys.stdout.write('\r' + ' ' * (len(self.message) + 5) + '\r')  # rydd linjen
 
-# Modelloppsett
-embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-llm = Ollama(model="dolphin-mistral")
+    def start(self):
+        self.stop_running = False
+        self.thread.start()
 
-# Indeksbygging eller lasting
-if os.path.exists(INDEX_DIR):
-    print("🔄 Laster indeksen fra disk ...")
-    storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
-    index = load_index_from_storage(storage_context, embed_model=embed_model)
-elif pdf_files:
-    print(f"📄 Fant {len(pdf_files)} PDF-fil(er), bygger indeks ...")
-    documents = SimpleDirectoryReader(PDF_FOLDER).load_data()
-    index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
-    index.storage_context.persist(persist_dir=INDEX_DIR)
-    print("✅ Indeks bygget og lagret.")
-else:
-    print(f"[INFO] Ingen PDF-er funnet i '{PDF_FOLDER}'. Starter uten kontekst.")
-    index = None
+    def stop(self):
+        self.stop_running = True
+        self.thread.join()
 
-# Spørringsmotor
-if index:
-    query_engine = index.as_query_engine(llm=llm, streaming=True)
+def main():
+    print(f"{BOLD}📚 CLI Chatbot med PDF-kontext (valgfritt){RESET}\n")
 
-# CLI Loop
-print("📢 CLI Chatbot klar. Skriv 'exit' for å avslutte.")
+    pdf_files = ensure_pdf_folder()
 
-while True:
-    user_input = input("Du: ").strip()
-    if user_input.lower() in ["exit", "quit"]:
-        print("👋 Avslutter.")
-        break
-    if not user_input:
-        continue
-
-    if index:
-        try:
-            response = query_engine.query(user_input)
-            print("Bot: ", end="", flush=True)
-            for token in response.response_gen:
-                print(token, end="", flush=True)
-            print()
-        except Exception as e:
-            print(f"[FEIL]: {str(e)}")
+    if pdf_files:
+        print(f"{BLUE}[INFO]{RESET} Fant {len(pdf_files)} PDF-fil(er). Laster eller bygger indeks ...")
     else:
-        print(f"[INFO] Du spurte: '{user_input}', men ingen PDF-kontekst er tilgjengelig.")
+        print(f"{CYAN}[INFO]{RESET} Ingen PDF-er funnet. Starter uten PDF-kontekst.")
+
+    index = load_or_build_index(pdf_files)
+    query_engine = get_query_engine(index)
+
+    while True:
+        try:
+            user_input = input(f"{BOLD}{BLUE}Du:{RESET} ")
+            if user_input.lower() in ['exit', 'quit']:
+                print(f"{CYAN}Avslutter chatten. Ha en fin dag!{RESET}")
+                break
+
+            spinner = Spinner()
+            spinner.start()
+
+            if index:
+                response = query_engine.query(user_input)
+                spinner.stop()
+                print(f"{BOLD}{GREEN}Bot:{RESET} ", end='', flush=True)
+                for token in response.response_gen:
+                    print(token, end='', flush=True)
+                print()
+            else:
+                spinner.stop()
+                print(f"{BOLD}{GREEN}Bot:{RESET} {CYAN}[INFO]{RESET} Du spurte: '{user_input}', men ingen PDF-kontekst er lastet.")
+
+        except KeyboardInterrupt:
+            print(f"\n{CYAN}Avslutter chatten.{RESET}")
+            break
+
+if __name__ == "__main__":
+    main()

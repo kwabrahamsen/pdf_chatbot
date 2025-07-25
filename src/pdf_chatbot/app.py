@@ -1,48 +1,11 @@
-import os
 from flask import Flask, request, jsonify, render_template, Response, stream_with_context
-from llama_index.core import (
-    VectorStoreIndex,
-    StorageContext,
-    load_index_from_storage,
-    SimpleDirectoryReader
-)
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from pdf_chatbot.core import ensure_pdf_folder, load_or_build_index, get_query_engine
 
 app = Flask(__name__)
 
-# 📁 Mappestier
-PDF_FOLDER = "pdf_folder"
-INDEX_DIR = "index_storage"
-
-# ✅ Opprett pdf_folder hvis den ikke finnes
-os.makedirs(PDF_FOLDER, exist_ok=True)
-
-# 🔍 Finn PDF-filer
-pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.lower().endswith('.pdf')]
-
-# 🔧 Modelloppsett
-embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-llm = Ollama(model="dolphin-mistral")
-
-# 🧠 Indekshåndtering
-if os.path.exists(INDEX_DIR):
-    print("🔄 Laster indeksen fra disk ...")
-    storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
-    index = load_index_from_storage(storage_context, embed_model=embed_model)
-elif pdf_files:
-    print(f"📄 Fant {len(pdf_files)} PDF-fil(er), bygger indeks ...")
-    documents = SimpleDirectoryReader(PDF_FOLDER).load_data()
-    index = VectorStoreIndex.from_documents(documents, embed_model=embed_model)
-    index.storage_context.persist(persist_dir=INDEX_DIR)
-    print("✅ Indeks bygget og lagret.")
-else:
-    print(f"[INFO] Ingen PDF-er funnet i '{PDF_FOLDER}'. Starter app uten kontekst.")
-    index = None  # Ingen indeks foreløpig
-
-# 🎯 Spørringsmotor (kun hvis indeks finnes)
-if index:
-    query_engine = index.as_query_engine(llm=llm, streaming=True)
+pdf_files = ensure_pdf_folder()
+index = load_or_build_index(pdf_files)
+query_engine = get_query_engine(index)
 
 @app.route("/")
 def index_page():
@@ -57,7 +20,7 @@ def chat():
 
     def generate():
         try:
-            if index:
+            if query_engine:
                 response = query_engine.query(query)
                 for token in response.response_gen:
                     yield token

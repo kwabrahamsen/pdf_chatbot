@@ -1,11 +1,11 @@
 # PDF Chatbot med LlamaIndex, Flask og Ollama
 
-Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til innholdet i dine egne PDF-filer. Den bruker `LlamaIndex` til å indeksere dokumenter, `Ollama` som LLM-backend, og `Flask` som webserver.
+Dette prosjektet er en enkel lokal chatbot som kan kjøres enten som webapp eller som kommandolinjeverktøy, og lar deg stille spørsmål til innholdet i dine egne PDF-filer. Den bruker `LlamaIndex` til å indeksere dokumenter, `Ollama` som LLM-backend, og `Flask` som webserver.
 
 ## Funksjoner
 
 - Last inn og indekser egne PDF-filer
-- Still spørsmål i et enkelt webgrensesnitt
+- Still spørsmål i en chat i et webgrensesnitt eller i kommandolinjen
 - Få svar generert av en språkmodell (Dolphin-Mistral via Ollama)
 - Sanntids-strømming av svaret til siden
 
@@ -31,6 +31,8 @@ pdf-chatbot/
     └── pdf_chatbot/
         ├── __init__.py
         ├── app.py
+        ├── cli.py
+        ├── core.py
         ├── templates/
         │   └── index.html
         └── static/
@@ -51,13 +53,23 @@ poetry install
 
 Plasser én eller flere PDF-filer i `pdf_folder/`.
 
-### 3. Kjør appen
+### 3. (Alternativ 1) Kjør Flask-appen
 
 ```bash
 poetry run python src/pdf_chatbot/app.py
 ```
 
 Besøk http://localhost:5000 i nettleseren for å chatte med PDF-ene dine.
+
+### 3. (Alternativ 2) Kjør CLI-appen
+
+```bash
+poetry run python src/pdf_chatbot/cli.py
+
+# Avslutt
+ctrl+C  # Alternativ 1
+quit    # Alternativ 2
+```
 
 ## Gjenoppbygging av indeks
 
@@ -71,11 +83,14 @@ Laget med ❤️ og CPU-varme 🔥 for å forstå hvordan store språkmodeller (
 
 ## Skjermbilder
 
-Skjermbilde av chatbotten i lys modus:
+Skjermbilde av web-chatbotten i lys modus:
 ![Skjermbilde av chatbotten i lys modus](images/chatbot_light.png)
 
-Skjermbilde av chatbotten i mørk modus:
+Skjermbilde av web-chatbotten i mørk modus:
 ![Skjermbilde av chatbotten i mørk modus](images/chatbot_dark.png)
 
-Skjermbilde av chatbottens chat utforming:
+Skjermbilde av web-chatbottens chat:
 ![Skjermbilde av chatbottens chat utforming](images/chatbot_chat.png)
+
+Skjermbilde av CLI-chatbottens chat:
+![Skjermbilde av chatbottens chat utforming](images/chatbot_cli.png)
