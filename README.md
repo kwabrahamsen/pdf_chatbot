@@ -62,3 +62,20 @@ Besøk http://localhost:5000 i nettleseren for å chatte med PDF-ene dine.
 ## Gjenoppbygging av indeks
 
 Hvis du oppdaterer innholdet i pdf_folder/, slett mappen index_storage/ for å bygge indeksen på nytt neste gang appen startes.
+
+## Lisens
+
+Dette prosjektet er lisensiert under [MIT-lisensen](LICENSE).
+
+Laget med ❤️ og CPU-varme 🔥 for å forstå hvordan blockchain fungerer!
+
+## Skjermbilder
+
+Skjermbilde av chatbotten i lys modus:
+![Skjermbilde av chatbotten i lys modus](images/chatbot_light.png)
+
+Skjermbilde av chatbotten i mørk modus:
+![Skjermbilde av chatbotten i mørk modus](images/chatbot_dark.png)
+
+Skjermbilde av chatbottens chat utforming:
+![Skjermbilde av chatbottens chat utforming](images/chatbot_chat.png)
