@@ -6,7 +6,7 @@ Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til
 
 - Last inn og indekser egne PDF-filer
 - Still spørsmål i et enkelt webgrensesnitt
-- Få svar generert av en språkmodell (f.eks. Dolphin-Mistral via Ollama)
+- Få svar generert av en språkmodell (Dolphin-Mistral via Ollama)
 - Sanntids-strømming av svaret til siden
 
 ## Teknologier
@@ -14,7 +14,7 @@ Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til
 - **Python 3.10+**
 - **Flask** – enkel backend og API
 - **LlamaIndex** – for dokumentindeksering og spørringer
-- **Ollama** – lokal kjøring av LLM (eks. dolphin-mistral)
+- **Ollama** – lokal kjøring av LLM (dolphin-mistral)
 - **HuggingFace Embeddings** – for tekstvektorer
 - **HTML/JS** – frontend med støtte for sanntidsstrømming
 
@@ -22,13 +22,21 @@ Dette prosjektet er en enkel webbasert chatbot som lar deg stille spørsmål til
 
 ```text
 pdf-chatbot/
-├── app.py                 # Flask-app med API-endepunkt
-├── pdf_folder/            # Legg dine PDF-filer her
-├── index_storage/         # Lagret vektorindeks (auto-generert)
-├── templates/
-│   └── index.html         # Webgrensesnitt
-├── pyproject.toml         # Administrert av Poetry
-└── README.md
+├── LICENSE
+├── README.md
+├── pyproject.toml         # Poetry konfigurasjon
+├── poetry.lock            # Låst avhengigheter for poetry
+├── .gitignore
+└── src/
+    └── pdf_chatbot/
+        ├── __init__.py
+        ├── app.py
+        ├── templates/
+        │   └── index.html
+        └── static/
+            └── styles.css
+        ├── pdf_folder/          # PDF-dokumenter for indeksering (opprettes automatisk ved behov)
+        └── index_storage/      # Lagringsmappe for søkeindeksen (genereres automatisk)
 ```
 
 ## Kom i gang

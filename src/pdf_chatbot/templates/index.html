@@ -12,11 +12,18 @@
         <h1>📄 PDF Chatbot</h1>
         <button id="theme-toggle">🌙</button>
     </div>
+    <div>
+        {% if pdf_files %}
+            <p><strong>Lastede PDF-er:</strong> {{ pdf_files | join(', ') }}</p>
+        {% else %}
+            <p style="color: red;"><strong>Ingen PDF-er funnet i <code>pdf_folder</code>.</strong> Legg til PDF-dokumenter for kontekstsøk.</p>
+        {% endif %}
+    </div>
 
     <div id="chatbox"></div>
 
     <div class="chat-input">
-        <input id="input" type="text" placeholder="Skriv spørsmålet ditt..." autofocus />
+        <input id="input" type="text" placeholder="Skriv spørsmålet ditt (Fungerer best på engelsk)..." autofocus />
         <button onclick="sendQuery()">Send</button>
     </div>
 
