@@ -1,4 +1,4 @@
-# PDF Chatbot med LlamaIndex, Flask og Ollama
+# PDF Chatbot for Flask-App eller CLI
 
 Dette prosjektet er en enkel lokal chatbot som kan kjøres enten som webapp eller som kommandolinjeverktøy, og lar deg stille spørsmål til innholdet i dine egne PDF-filer. Den bruker `LlamaIndex` til å indeksere dokumenter, `Ollama` som LLM-backend, og `Flask` som webserver.
 
