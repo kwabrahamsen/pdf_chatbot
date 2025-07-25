@@ -2,28 +2,54 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../static/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <h1>PDF Chatbot</h1>
+    <div class="header">
+        <h1>📄 PDF Chatbot</h1>
+        <button id="theme-toggle">🌙</button>
+    </div>
+
     <div id="chatbox"></div>
-    <input id="input" type="text" placeholder="Skriv spørsmålet ditt..." autofocus />
-    <button onclick="sendQuery()">Send</button>
+
+    <div class="chat-input">
+        <input id="input" type="text" placeholder="Skriv spørsmålet ditt..." autofocus />
+        <button onclick="sendQuery()">Send</button>
+    </div>
 
     <script>
         const chatbox = document.getElementById('chatbox');
         const input = document.getElementById('input');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // 🌗 Tema-håndtering
+        function setTheme(theme) {
+            body.dataset.theme = theme;
+            localStorage.setItem('theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Last lagret tema eller default
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = body.dataset.theme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
 
         function appendMessage(sender, text, className = '') {
             const div = document.createElement('div');
-            div.className = className || sender;
+            div.className = 'message ' + (className || sender);
 
             if (sender === 'user') {
-                div.textContent = 'Du: ' + text;
+                div.textContent = text;
             } else {
-                div.innerHTML = `<strong>Bot:</strong><br><span class="bot-content"></span>`;
+                div.innerHTML = `<span class="bot-content typing-indicator"><span></span><span></span><span></span></span>`;
             }
 
             chatbox.appendChild(div);
@@ -37,10 +63,10 @@
 
             appendMessage('user', query);
             input.value = '';
+            input.focus();
 
             const botDiv = appendMessage('bot', '', 'thinking');
             const contentSpan = botDiv.querySelector('.bot-content');
-            contentSpan.innerHTML = '<em>Skriver...</em>';
 
             try {
                 const res = await fetch('/chat', {
@@ -52,6 +78,8 @@
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 let fullText = '';
+                contentSpan.classList.remove('typing-indicator');
+                contentSpan.innerHTML = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -59,8 +87,6 @@
 
                     const chunk = decoder.decode(value, { stream: true });
                     fullText += chunk;
-
-                    // Oppdater visning med Markdown
                     contentSpan.innerHTML = marked.parse(fullText);
                     chatbox.scrollTop = chatbox.scrollHeight;
                 }
