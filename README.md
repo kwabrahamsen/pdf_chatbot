@@ -54,7 +54,7 @@ Plasser én eller flere PDF-filer i `pdf_folder/`.
 ### 3. Kjør appen
 
 ```bash
-poetry run python app.py
+poetry run python src/pdf_chatbot/app.py
 ```
 
 Besøk http://localhost:5000 i nettleseren for å chatte med PDF-ene dine.
