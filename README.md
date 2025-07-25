@@ -61,7 +61,7 @@ Besøk http://localhost:5000 i nettleseren for å chatte med PDF-ene dine.
 
 ## Gjenoppbygging av indeks
 
-Hvis du oppdaterer innholdet i pdf_folder/, slett mappen index_storage/ for å bygge indeksen på nytt neste gang appen startes.
+Hvis du oppdaterer innholdet i `pdf_folder/`, slett mappen `index_storage/` for å bygge indeksen på nytt neste gang appen startes.
 
 ## Lisens
 
