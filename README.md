@@ -89,8 +89,5 @@ Skjermbilde av web-chatbotten i lys modus:
 Skjermbilde av web-chatbotten i mørk modus:
 ![Skjermbilde av chatbotten i mørk modus](images/chatbot_dark.png)
 
-Skjermbilde av web-chatbottens chat:
-![Skjermbilde av chatbottens chat utforming](images/chatbot_chat.png)
-
 Skjermbilde av CLI-chatbottens chat:
 ![Skjermbilde av chatbottens chat utforming](images/chatbot_cli.png)
