@@ -4,27 +4,38 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Chatbot</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+
+    <!-- Markdown parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>📄 PDF Chatbot</h1>
-        <button id="theme-toggle">🌙</button>
-    </div>
-    <div>
-        {% if pdf_files %}
-            <p><strong>Lastede PDF-er:</strong> {{ pdf_files | join(', ') }}</p>
-        {% else %}
-            <p style="color: red;"><strong>Ingen PDF-er funnet i <code>pdf_folder</code>.</strong> Legg til PDF-dokumenter for kontekstsøk.</p>
-        {% endif %}
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Chatbot</h1>
+            <button id="theme-toggle">Dark 🌙</button>
+        </div>
 
-    <div id="chatbox"></div>
+        <div>
+            {% if pdf_files %}
+                <p><strong>Lastede PDF-er:</strong> {{ pdf_files | join(', ') }}</p>
+            {% else %}
+                <p style="color: red;"><strong>Ingen PDF-er funnet i <code>pdf_folder</code>.</strong> Legg til PDF-dokumenter for kontekstsøk.</p>
+            {% endif %}
+        </div>
 
-    <div class="chat-input">
-        <input id="input" type="text" placeholder="Skriv spørsmålet ditt (Fungerer best på engelsk)..." autofocus />
-        <button onclick="sendQuery()">Send</button>
+        <div id="chatbox"></div>
+
+        <div class="chat-input">
+            <input id="input" type="text" placeholder="Skriv spørsmålet ditt (Fungerer best på engelsk)..." autofocus />
+            <button onclick="sendQuery()">Send</button>
+        </div>
     </div>
 
     <script>
@@ -33,15 +44,15 @@
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
 
-        // 🌗 Tema-håndtering
+        // Tema-håndtering
         function setTheme(theme) {
             body.dataset.theme = theme;
             localStorage.setItem('theme', theme);
-            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+            themeToggle.textContent = theme === 'dark' ? 'Light ☀️' : 'Dark 🌙';
         }
 
-        // Last lagret tema eller default
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light');
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light');
         setTheme(savedTheme);
 
         themeToggle.addEventListener('click', () => {
@@ -51,7 +62,10 @@
 
         function appendMessage(sender, text, className = '') {
             const div = document.createElement('div');
-            div.className = 'message ' + (className || sender);
+            div.className = 'message ' + sender;
+            if (className) {
+                div.classList.add(className);  // F.eks. 'thinking'
+            }
 
             if (sender === 'user') {
                 div.textContent = text;
@@ -94,7 +108,9 @@
 
                     const chunk = decoder.decode(value, { stream: true });
                     fullText += chunk;
+
                     contentSpan.innerHTML = marked.parse(fullText);
+                    hljs.highlightAll();  // 🎉 Highlight ny kode
                     chatbox.scrollTop = chatbox.scrollHeight;
                 }
 

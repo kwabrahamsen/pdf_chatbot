@@ -1,29 +1,55 @@
+/* Grunnleggende stil og Flex-oppsett */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 2rem auto;
-    max-width: 800px;
-    padding: 1rem;
+    margin: 0;
+    padding: 0;
     background: #f0f2f5;
     color: #333;
-}
-
-#chatbox {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1rem;
-    height: 500px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
+/* Sørger for maks bredde og midtstilling */
+.container {
+    max-width: 1200px; /* Økt fra 1100px */
+    margin: 0 auto;
+    padding: 0 2rem; /* Økt padding */
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    height: 100vh;
+    width: 90%; /* Legger til relativ bredde */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    flex-shrink: 0; /* Ikke krymp */
+}
+
+/* Chatboksen fyller all tilgjengelig plass */
+#chatbox {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 1.5rem; /* Økt padding */
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+
+/* Meldingsbobler */
 .message {
-    margin: 0.5rem 0;
-    padding: 0.75rem 1rem;
+    margin: 0.75rem 0; /* Litt mer margin */
+    padding: 0.85rem 1.2rem; /* Mer padding */
     border-radius: 12px;
-    max-width: 80%;
+    max-width: 75%; /* Litt smalere for bedre lesbarhet */
     line-height: 1.4;
     word-wrap: break-word;
     transition: background 0.3s ease;
@@ -35,7 +61,7 @@ body {
 }
 
 .bot {
-    background: #e2f7e1;
+    background: #e0e0e0;  /* Lys grå boble */
     align-self: flex-start;
 }
 
@@ -47,16 +73,18 @@ body {
     font-family: 'Courier New', monospace;
 }
 
-.thinking {
-    color: #888;
-    font-style: italic;
-    font-size: 0.9rem;
-}
-
+/* Input-felt nederst - sticky */
 .chat-input {
+    position: sticky;
+    bottom: 0;
+    background: inherit; /* Samme bakgrunn som body */
+    border-top: 1px solid #ccc;
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    padding: 1rem 0;
+    flex-shrink: 0;
+    z-index: 10; /* Sørg for at den ligger over chatten */
 }
 
 input[type="text"] {
@@ -88,95 +116,24 @@ button:hover {
     background: #0056b3;
 }
 
-/* Mørk modus via prefers-color-scheme */
-@media (prefers-color-scheme: dark) {
-    body {
-        background: #121212;
-        color: #e0e0e0;
-    }
-
-    #chatbox {
-        background: #1e1e1e;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-
-    .user {
-        background: #2a4d6f;
-    }
-
-    .bot {
-        background: #2e5e2c;
-    }
-
-    input[type="text"] {
-        background: #2a2a2a;
-        border-color: #555;
-        color: #e0e0e0;
-    }
-
-    button {
-        background: #2196f3;
-    }
-
-    button:hover {
-        background: #1e88e5;
-    }
-
-    .bot-content pre {
-        background: #2a2a2a;
-        color: #ccc;
-    }
-}
-
-/* Ekstra: Manuell mørk-modus via toggle */
-body[data-theme="dark"] {
-    background: #121212;
-    color: #e0e0e0;
-}
-
-body[data-theme="dark"] #chatbox {
+code {
+    font-family: monospace;
     background: #1e1e1e;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    color: #dcdcdc;
+    padding: 2px 4px;
+    border-radius: 4px;
 }
 
-body[data-theme="dark"] .user {
-    background: #2a4d6f;
+pre code {
+    display: block;
+    padding: 12px;
+    overflow-x: auto;
+    background: #1e1e1e;
+    color: #dcdcdc;
+    border-radius: 6px;
 }
 
-body[data-theme="dark"] .bot {
-    background: #2e5e2c;
-}
-
-body[data-theme="dark"] input[type="text"] {
-    background: #2a2a2a;
-    border-color: #555;
-    color: #e0e0e0;
-}
-
-body[data-theme="dark"] button {
-    background: #2196f3;
-}
-
-body[data-theme="dark"] button:hover {
-    background: #1e88e5;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-#theme-toggle {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: inherit;
-}
-
-/* Animasjon for “skriver...” indikator */
+/* Skriver-indikator */
 .typing-indicator {
     display: flex;
     align-items: center;
@@ -203,10 +160,106 @@ body[data-theme="dark"] button:hover {
 }
 
 @keyframes bounce {
-    0%, 80%, 100% {
-        transform: scale(0);
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+/* Mørk modus: automatisk */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #121212;
+        color: #e0e0e0;
     }
-    40% {
-        transform: scale(1);
+
+    #chatbox {
+        background: #1e1e1e;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .user {
+        background: #2a4d6f;
+    }
+
+    .bot {
+        background: #2e5e2c;  /* Mørk grønn bot-boble */
+    }
+
+    input[type="text"] {
+        background: #2a2a2a;
+        border-color: #555;
+        color: #e0e0e0;
+    }
+
+    button {
+        background: #2196f3;
+    }
+
+    button:hover {
+        background: #1e88e5;
+    }
+
+    .bot-content pre {
+        background: #2a2a2a;
+        color: #ccc;
+    }
+
+    .chat-input {
+        border-top: 1px solid #444;
+        background: #121212;
+    }
+}
+
+/* Mørk modus: manuelt via data-theme */
+body[data-theme="dark"] {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+body[data-theme="dark"] #chatbox {
+    background: #1e1e1e;
+}
+
+body[data-theme="dark"] .user {
+    background: #2a4d6f;
+}
+
+body[data-theme="dark"] .bot {
+    background: #2e5e2c;
+}
+
+body[data-theme="dark"] input[type="text"] {
+    background: #2a2a2a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body[data-theme="dark"] button {
+    background: #2196f3;
+}
+
+body[data-theme="dark"] button:hover {
+    background: #1e88e5;
+}
+
+body[data-theme="dark"] .bot-content pre {
+    background: #2a2a2a;
+    color: #ccc;
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+        width: 85%;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1400px;
+        width: 80%; /* Litt mindre relativ bredde på veldig store skjermer */
+    }
+
+    .message {
+        max-width: 70%; /* La meldingsboblene være litt smalere */
     }
 }
