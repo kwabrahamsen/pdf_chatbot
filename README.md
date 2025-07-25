@@ -67,7 +67,7 @@ Hvis du oppdaterer innholdet i pdf_folder/, slett mappen index_storage/ for å b
 
 Dette prosjektet er lisensiert under [MIT-lisensen](LICENSE).
 
-Laget med ❤️ og CPU-varme 🔥 for å forstå hvordan blockchain fungerer!
+Laget med ❤️ og CPU-varme 🔥 for å forstå hvordan store språkmodeller (LLMs) fungerer!
 
 ## Skjermbilder
 
